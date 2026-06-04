@@ -1,0 +1,517 @@
+===== SLIDE 1 (ppt/slides/slide1.xml) =====
+An Intelligent Assistant System Based on Retrieval-Augmented Generation (RAG) for Accessible Labor Insurance Guidance for Older Workers in Taiwan
+Master's Thesis Defense Department of Information Management Chaoyang University of Technology
+Candidate: Ankh-Erdene Ganbat Advisor: Dr. Sue-Chen Hsueh, Dr. Tzu- Chuen Lu April 2026
+碩士論文
+Keywords: RAG · LLM · Domain QA · Labor Rights · Accessibility · Elder-Friendly Interface
+
+===== SLIDE 2 (ppt/slides/slide2.xml) =====
+Agenda
+01
+Introduction
+Background, problem statement, research purpose, questions, and contributions
+02
+Literature Review
+Aging society, LLM limitations, RAG foundations, related work, and research gap
+03
+Research Method
+System architecture, knowledge construction, backend, frontend, and design considerations
+04
+Verification & Demonstration
+Verification sets A–C, quantitative summary, RAG vs. LLM-only baseline, and scenario demos
+05
+Conclusion & Future Work
+Key contributions, limitations, future directions, and closing remarks
+2
+
+===== SLIDE 3 (ppt/slides/slide3.xml) =====
+CHAPTER 1 — INTRODUCTION
+Background and Motivation
+Rapidly Aging Population
+Taiwan: super-aged society by 2025 ( 65+ exceeding 20% of population ).
+Fragmented Official Information
+Labor insurance info scattered across statutes, regulations, portals — authoritative but hard to navigate.
+Compounded Barriers for Older Adults
+Reading burden, interface complexity, difficulty synthesizing info from multiple sources .
+Reliability Risk of Unconstrained LLMs
+LLMs generate fluent but factually incorrect responses — critical risk in labor rights domains.
+3
+
+===== SLIDE 4 (ppt/slides/slide4.xml) =====
+CHAPTER 1 — INTRODUCTION
+Problem Statement
+The Core Problem
+Older workers need accurate labor insurance guidance, but the current information environment is fragmented and hard to use.
+Official information is scattered
+Applicable rules are difficult to identify.
+Informal sources may mislead.
+LLMs may hallucinate.
+4
+
+===== SLIDE 5 (ppt/slides/slide5.xml) =====
+CHAPTER 1 — INTRODUCTION
+Real-World Situation
+1
+Uncertain which labour insurance or welfare benefits apply.
+2
+Difficulty finding where to apply, required documents, and correct procedures.
+3
+Informal sources risk misunderstanding official rules or missing key conditions.
+5
+
+===== SLIDE 6 (ppt/slides/slide6.xml) =====
+6
+CHAPTER 1 — INTRODUCTION
+
+===== SLIDE 7 (ppt/slides/slide7.xml) =====
+Bureau of labor insurance law & regulation pages
+Disability benefit standards
+7
+CHAPTER 1 — INTRODUCTION
+
+===== SLIDE 8 (ppt/slides/slide8.xml) =====
+BLI office directory: address, phone, hours
+8
+CHAPTER 1 — INTRODUCTION
+
+===== SLIDE 9 (ppt/slides/slide9.xml) =====
+CHAPTER 1 — INTRODUCTION
+Why This Matters
+Incorrect info on eligibility or deadlines can directly affect rights and outcomes .
+Reliability
+Grounded in official sources only.
+Traceability
+Every answer linked to a source.
+Accessibility
+Designed for non-expert older users.
+Public-facing support systems require reliability, traceability, and evidence-based generation .
+9
+
+===== SLIDE 10 (ppt/slides/slide10.xml) =====
+CHAPTER 1 — INTRODUCTION
+Research Purpose
+1
+Evidence-Supported Question Answering
+Generate responses based on retrieved official evidence.
+2
+Maintainable Knowledge-Base Workflow
+Enable content updates independently of model retraining.
+3
+Accessibility-Oriented User Interaction
+Improve usability for older adults through clearer and simpler access.
+10
+
+===== SLIDE 11 (ppt/slides/slide11.xml) =====
+CHAPTER 1 — INTRODUCTION
+Research Questions
+RQ1
+RAG Pipeline Design
+How to design a RAG pipeline using official Taiwan government sources?
+Citation Faithfulness
+Whether generated claims can be linked to retrieved passages?
+Uncertainty Handling
+How the system handles uncertainty, ambiguity, and out-of-scope requests?
+Accessibility & Transparency
+Whether the system satisfies accessibility and transparency requirements ?
+11
+RQ2
+RQ3
+RQ4
+
+===== SLIDE 12 (ppt/slides/slide12.xml) =====
+CHAPTER 1 — INTRODUCTION
+Key Contributions
+Government-Source-First Knowledge Base
+Official sources: traceable, provenance-rich vector index
+Modular RAG Backend
+Ingestion, embedding, retrieval, reranking, evidence-conditioned generation
+Elder-Oriented Interface
+Bilingual, large-text, high-contrast, FAQ chips, voice I/O
+Verification-Oriented Evaluation Strategy
+V erification and scenario demos for transparency and reproducibility
+①
+②
+③
+④
+12
+
+===== SLIDE 13 (ppt/slides/slide13.xml) =====
+CHAPTER 2 — LITERATURE REVIEW
+Why Standard LLMs Are Insufficient
+Knowledge Timeliness
+Training cutoffs miss post-training regulatory changes.
+Hallucination Risk
+Fluent but wrong answers cause harm in labor rights contexts.
+Lack of Source Traceability
+Users cannot verify claims against official government sources.
+Insufficient Domain Precision
+Labor law requires exact retrieval, not probabilistic recall.
+13
+
+===== SLIDE 14 (ppt/slides/slide14.xml) =====
+CHAPTER 2 — LITERATURE REVIEW
+RAG Addresses Each Failure Mode
+Updatable Corpus
+Live corpus — regulatory updates reflected without retraining.
+Evidence Conditioning
+Answers grounded in retrieved authoritative passages.
+Source Metadata
+Provenance metadata traces claims to official BLI documents.
+Domain-Specific Retrieval
+Scoped to domain corpus — exact provisions surfaced.
+14
+
+===== SLIDE 15 (ppt/slides/slide15.xml) =====
+Retrieval-Augmented Generation as a Solution
+Generate
+Ground
+Retrieve
+CHAPTER 2 — LITERATURE REVIEW
+15
+
+===== SLIDE 16 (ppt/slides/slide16.xml) =====
+CHAPTER 2 — LITERATURE REVIEW
+Retrieval-Augmented Generation (RAG)
+Indexing
+Chunk, embed, and store documents
+Retrieval
+Embed query and retrieve top‑k passages
+Generation
+LLM generates answer using retrieved evidence
+16
+
+===== SLIDE 17 (ppt/slides/slide17.xml) =====
+CHAPTER 2 — LITERATURE REVIEW
+Related Work Overview
+Legal NLP & Regulatory QA
+Legal fluency does not guarantee legal accuracy
+RAG for Legal QA
+Performance depends on retrieval quality and citation grounding
+E-Government Assistants
+Useful for access, but often weak in accountability and safe refusal
+Accessibility for Older Adults
+Large text, contrast, voice, and simplified interaction matter
+17
+
+===== SLIDE 18 (ppt/slides/slide18.xml) =====
+CHAPTER 2 — LITERATURE REVIEW
+Research Gap
+No RAG grounded exclusively in official TW government sources.
+No Chinese-first labor and welfare knowledge base with per-chunk provenance.
+No elder-oriented interface (large-text and contrast and voice support).
+No explicit abstention behavior when retrieved evidence is insufficient.
+No prompt-injection resistance verified through adversarial test cases .
+18
+
+===== SLIDE 19 (ppt/slides/slide19.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Overall System Architecture
+Modular three-layer architecture: Knowledge to Retrieval/Generation to Interaction
+Implementation  Stack
+19
+
+===== SLIDE 20 (ppt/slides/slide20.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Overall System Architecture
+Layer 1 — Knowledge Layer
+Official sources to chunk, embed (3072-dim), index in Qdrant with provenance metadata
+Layer 2 — Retrieval & Generation Layer
+Top-k retrieval from Qdrant to gpt-4o generation conditioned on evidence only
+Layer 3 — Interaction Layer
+Bilingual UI (zh/en), large-text, high-contrast, FAQ chips, voice STT/TTS
+20
+
+===== SLIDE 21 (ppt/slides/slide21.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+End-to-End Workflow
+Offline Knowledge Preparation
+Source Collection
+BLI URLs + CSV datasets
+Text Cleaning
+HTML parsing, token-based chunking
+Embedding
+Model: text-embedding-3-large
+Vector Storage
+Qdrant —vectors + metadata
+Online Question Answering
+User Query
+Text or voice (STT)
+Retrieval
+Search, then top candidates
+Generation
+LLM, evidence-conditioned
+Response
+Source links + optional TTS
+21
+
+===== SLIDE 22 (ppt/slides/slide22.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Knowledge Construction & Data Sources
+Three-Category Corpus
+Source
+Content
+Chunking
+law .csv (39 rows)
+BLI law & regulation pages (URLs)
+450 tokens / 60 overlap
+offices .csv (24 rows)
+BLI office directory: address, phone, hours
+Row-level (1 record = 1 vector)
+Disability .csv (15 rows)
+Disability benefit standards (data.gov.tw #45748)
+350 tokens / 40 overlap
+Total
+747 vectors
+—
+22
+
+===== SLIDE 23 (ppt/slides/slide23.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Ingestion Pipeline Design
+Collect, clean, chunk, embed, and store in Qdrant with metadata and then verify
+23
+
+===== SLIDE 24 (ppt/slides/slide24.xml) =====
+Ingestion Pipeline
+CHAPTER 3 — RESEARCH METHOD
+Vector storage
+Save all vectors to Qdrant database.
+Chunking
+Law: 450 tokens, 60-token overlap; Disability: 350 tokens, 40-token overlap; Offices: 1 row = 1 vector
+Embedding
+Each chunk to 3072-dim vector via OpenAI text-embedding-3-large model.
+Metadata attachment
+Title, source URL, category, date, doc type — for filtering and citation
+24
+
+===== SLIDE 25 (ppt/slides/slide25.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Vector database collection
+25
+
+===== SLIDE 26 (ppt/slides/slide26.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Retriever & QA Backend Design
+POST /ask
+User query received
+Query Embedding
+Embed query (text-embedding-3-large)
+Search
+Search in Qdrant
+Top Candidates
+Top passages retrieved
+Deduplication
+Deduplication and diversity selection to top-5
+Generation
+LLM generation
+Response
+Grounded response and source links
+Office-Intent Routing
+Location queries filtered by metadata (type=office), clarify if city/district missing
+Conservative Prompt Policy
+Use retrieved evidence only. Preserve numbers. Abstain when evidence insufficient.
+26
+
+===== SLIDE 27 (ppt/slides/slide27.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Frontend & Accessibility Features
+Bilingual Interface
+Chinese and English locale routing ( zh , en ). Toggle mid-session
+Elder-Oriented UI
+Large-text default, optional high-contrast. FAQ buttons for common queries
+Voice Interaction
+Whisper STT for input. TTS via ElevenLabs for playback. Audio cached.
+Practical Usability
+Print/save for offline reference. Simple flow for non-expert users
+27
+
+===== SLIDE 28 (ppt/slides/slide28.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+Bilingual Interface
+Elder-Oriented UI
+Voice Interaction
+Practical Usability
+28
+
+===== SLIDE 29 (ppt/slides/slide29.xml) =====
+CHAPTER 3 — RESEARCH METHOD
+- Large-text mode - Optional high-contrast mode.
+29
+
+===== SLIDE 30 (ppt/slides/slide30.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Retriever API Deployment Verification
+Backend health check confirming service availability
+30
+
+===== SLIDE 31 (ppt/slides/slide31.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Verification Methodology
+System-oriented verification: three pipeline-aligned sets (A, B, C) with defined inputs, procedures, acceptance criteria, and preserved artifacts
+All runs: 2025-12-17, deployed prototype. Artifacts: logs, Qdrant screenshots, API JSON, UI screenshots.
+31
+
+===== SLIDE 32 (ppt/slides/slide32.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Scenario-Based Demonstrations (1/4)
+D1 — Labor Rights Rule Question
+勞工保險失能給付有哪些條件？
+Retrieved official disability-benefit + LIA passages Grounded summary with cited sources No unsupported claims generated
+32
+
+===== SLIDE 33 (ppt/slides/slide33.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Scenario-Based Demonstrations (2/4)
+D2 — Welfare Eligibility Definition
+勞工保險條例第54條之2第2項無謀生能力的範圍是什麼？
+Retrieved official interpretation Verified categories and conditions Numeric details preserved
+33
+
+===== SLIDE 34 (ppt/slides/slide34.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Scenario-Based Demonstrations (3/4)
+D3 — Office Location Query
+台中勞保局在哪裡？地址跟電話是什麼 ？
+Office-intent routing triggered Retrieved Taichung BLI office record Address, phone, hours, official link returned
+35
+34
+
+===== SLIDE 35 (ppt/slides/slide35.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Scenario-Based Demonstrations (4/4)
+D4 — Out-of-Scope: Personal Calculation
+我想知道我個人的勞保能領多少，幫我直接算出來
+Correctly refused personal calculation Referred to official calculators and BLI counters No speculative output; disclaimer appended
+35
+
+===== SLIDE 36 (ppt/slides/slide36.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Verification Sets A, B & C — Results
+Set A: Ingestion to Indexing
+All 6 Criteria: PASS
+Collection labor_assistant_v1 created; 3072-dim, Cosine; 747 points (708+24+15); provenance confirmed
+Set B: Retrieval Quality (Q1–Q12)
+12/12 Queries: PASS
+9 Relevant, 3 Partially Relevant. Office routing correct. Q6/Q11: conservative responses. 9/12=75%
+Set C: Grounding & Safety (C1–C5)
+5/5 Test Cases: PASS
+Grounding confirmed; numeric fidelity preserved; personal calc refused; injection rejected; disclaimer present
+747
+Total Indexed Vectors
+Law + office + disability datasets
+100%
+HTTP Success Rate
+All 12 queries returned HTTP 200
+4,139ms
+Mean Latency
+Per query (median 4,290ms; p95 ~6,331ms)
+75%
+Queries with 3–5 Sources
+9/12 returned 3–5 sources
+36
+
+===== SLIDE 37 (ppt/slides/slide37.xml) =====
+CHAPTER 4 — VERIFICATION & DEMONSTRATION
+Comparative Baseline: RAG vs. LLM-Only
+Criterion
+RAG System (Deployed Prototype)
+LLM-Only Baseline (No Retrieval)
+Mean Latency
+4,138.6 ms
+3,495.3 ms
+Source Visibility
+Sources returned for all tested queries ✓
+No retrieved sources ✗
+Office / Location Queries
+Exact address, phone, hours, official links ✓
+Generic or approximate guidance only ✗
+Boundary / Incomplete-Evidence Cases
+Conservative responses when evidence was insufficient ✓
+Relied on unsupported general knowledge ✗
+Safety & Traceability
+Grounded, citable, domain-specific ✓
+No citation path, weaker accountability ✗
+Overall Judgment
+Manually judged superior across all 12 test queries ✓
+Inferior on source visibility, domain specificity, and safe handling ✗
+12/12
+Queries where RAG judged superior
++643ms
+Additional latency vs. LLM-only
+(retrieval cost)
+37
+
+===== SLIDE 38 (ppt/slides/slide38.xml) =====
+CHAPTER 5 — CONCLUSION & FUTURE WORK
+Current Limitations
+Corpus Coverage Gaps
+Some edge cases not covered, system reports insufficient evidence rather than guessing
+Retrieval Sensitivity
+Depends on chunking, metadata, query phrasing, long conditions may split across chunks
+Limited Quantitative Evaluation
+Verification-oriented, no generalizable benchmark claims
+38
+
+===== SLIDE 39 (ppt/slides/slide39.xml) =====
+CHAPTER 5 — CONCLUSION
+RQ Coverage Summary
+Contribution
+Verification Evidence
+Key Limitation
+39
+
+===== SLIDE 40 (ppt/slides/slide40.xml) =====
+CHAPTER 5 — CONCLUSION
+Conclusion
+Summary of Contributions
+Deployed End-to-End RAG System
+Working prototype: official sources to evidence-grounded, traceable responses for elder labor insurance guidance
+Verified Pipeline Correctness
+Sets A–C confirm ingestion integrity, retrieval adequacy (12 queries), and safe generation under uncertainty
+Accessibility-Oriented Design
+Bilingual, voice-enabled, conservative answering — reliability and accessibility as central requirements
+40
+
+===== SLIDE 41 (ppt/slides/slide41.xml) =====
+CHAPTER 5 — CONCLUSION & FUTURE WORK
+Future Work
+Corpus Expansion & Refresh Automation
+Scheduled re-ingestion pipeline Dataset versioning Targeted source expansion
+Hybrid Retrieval & Reranking
+BM25 + dense retrieval Cross-encoder reranking Improved legal-text chunking
+User-Centered Usability Study
+Older adult participants Task success and usability evaluation Iterative interface refinement
+Governance & Security Hardening
+Access control and audit logging Rate limiting Stronger prompt-injection defenses
+41
+
+===== SLIDE 42 (ppt/slides/slide42.xml) =====
+Thank You
+Questions & Discussion
+Candidate
+Ankh-Erdene Ganbat Department of Information Management Chaoyang University of Technology
+Advisor
+Dr. Sue-Chen Hsueh Dr. Tzu- Chuen Lu
+Key Technical Terms for Reference
+RAG Pipeline
+Retrieval-Augmented Generation: indexing to retrieval to evidence-conditioned generation
+Vector Database
+Qdrant (labor_assistant_v1); text-embedding-3-large; 3072-dim; cosine similarity; HNSW search
+Evaluation Strategy
+Verification Sets A–C; 12 case queries; grounding inspection; scenario-based demonstrations
+42
+
+===== SLIDE 43 (ppt/slides/slide43.xml) =====
+Appendix A
+System Architecture (Thesis Figure 3-1) is simplified in Slides 19–20
+43
+
+===== SLIDE 44 (ppt/slides/slide44.xml) =====
+Appendix B
+End-to-End Workflow (Thesis Figure 3-2) is  simplified in Slide 21.
+44
+
+===== SLIDE 45 (ppt/slides/slide45.xml) =====
+Appendix C
+Verification Sets Mapped to Pipeline (Thesis Figure 4-1) is simplified in Slides 31
+45

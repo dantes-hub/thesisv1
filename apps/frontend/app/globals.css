@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+    /* for high contrast mode */
+  .high-contrast .bg-gradient-to-br,
+  .high-contrast .from-sky-50,
+  .high-contrast .via-emerald-50,
+  .high-contrast .to-slate-100 {
+    background-image: none !important;
+    background-color: #000 !important;
+    --tw-gradient-from: #000 !important;
+    --tw-gradient-stops: #000 !important;
+    --tw-gradient-to: #000 !important;
+  }
+
+  .high-contrast .text-slate-900 {
+    color: #fff !important;
+  }
+   
+    .high-contrast .bg-white,
+    .high-contrast .bg-slate-50,
+    .high-contrast .bg-sky-100,
+    .high-contrast .bg-sky-600,
+    .high-contrast .bg-emerald-50 {
+      background-color: #000 !important;
+    }
+  
+
+    .high-contrast .text-slate-900,
+    .high-contrast .text-slate-800,
+    .high-contrast .text-slate-700,
+    .high-contrast .text-slate-600,
+    .high-contrast .text-slate-500,
+    .high-contrast .text-sky-800 {
+      color: #fff !important;
+    }
+  
+    /* borders visible */
+    .high-contrast .border-slate-200,
+    .high-contrast .border-slate-300,
+    .high-contrast .border-sky-200 {
+      border-color: #fff !important;
+    }
+  
+    /* background page */
+    .high-contrast body,
+    .high-contrast html,
+    .high-contrast #__next,
+    .high-contrast main {
+      background-color: #000 !important;
+    }
+  
+    /* bubble contnrast */
+    .high-contrast .bg-sky-100 { background-color: #111 !important; }
+    .high-contrast .bg-slate-50 { background-color: #181818 !important; }
+    .high-contrast .bg-sky-600 { background-color: #333 !important; }
+  
+    /* buttons */
+    .high-contrast button {
+      background-color: #333 !important;
+      color: #fff !important;
+    }
+  
+    .high-contrast input,
+    .high-contrast textarea {
+      background-color: #111 !important;
+      color: #fff !important;
+      border-color: #fff !important;
+    }
+  
+    /* highlight link*/
+    .high-contrast a {
+      color: #ffcc00 !important;
+    }
+    .high-contrast .bg-sky-100 {
+        background-color: #111 !important;
+        border: 1px solid #fff !important;
+      }
+  }
+  
+  
+/* helpers */
+.big-text { font-size: 30px; line-height: 2.0; }
+.high-contrast { color: #111; background: #fff; }

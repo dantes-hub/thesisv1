@@ -1,0 +1,14 @@
+{
+  "title": "Elder Labor Assistant",
+  "desc": "Ask questions about labor insurance, pensions, and services. The assistant will reply in large text and with voice.",
+  "big": "Big text",
+  "faq1": "When will my pension be deposited?",
+  "faq2": "Where is the nearest labor insurance office?",
+  "faq3": "What benefits can I get for disability level 3?",
+  "yourQuestion": "Your question",
+  "placeholder": "e.g. I am 65 years old. Can I apply for labor insurance old-age pension?",
+  "ask": "Ask",
+  "clear": "Clear",
+  "answer": "Answer",
+  "disclaimer": "This is a demo assistant. Please verify information with official labor authorities."
+}
