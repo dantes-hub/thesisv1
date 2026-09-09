@@ -46,11 +46,15 @@ const limiter = (windowMs, max, message) => rateLimit({
   message: { error: 'rate_limited', detail: message },
 });
 
-const askLimiter = limiter(60 * 1000, 10, 'Too many questions. Wait a minute and try again.');
-const ttsLimiter = limiter(60 * 1000, 10, 'Too many speech requests. Wait a minute and try again.');
-const transcribeLimiter = limiter(60 * 1000, 5, 'Too many recordings. Wait a minute and try again.');
+// Configurable so a local evaluation batch can raise them; the defaults are
+// what a deployed instance should run with.
+const perMin = (name, fallback) => Number(process.env[name]) || fallback;
+
+const askLimiter = limiter(60 * 1000, perMin('RATE_LIMIT_ASK', 10), 'Too many questions. Wait a minute and try again.');
+const ttsLimiter = limiter(60 * 1000, perMin('RATE_LIMIT_TTS', 10), 'Too many speech requests. Wait a minute and try again.');
+const transcribeLimiter = limiter(60 * 1000, perMin('RATE_LIMIT_TRANSCRIBE', 5), 'Too many recordings. Wait a minute and try again.');
 // Blanket ceiling so no single IP can hammer the process.
-app.use(limiter(60 * 1000, 60, 'Too many requests.'));
+app.use(limiter(60 * 1000, perMin('RATE_LIMIT_GLOBAL', 60), 'Too many requests.'));
 const uploadsDir = path.join(process.cwd(), "uploads");
 try { fs.mkdirSync(uploadsDir, { recursive: true }); } catch {}
 

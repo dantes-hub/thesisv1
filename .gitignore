@@ -40,20 +40,15 @@ env/
 .ipynb_checkpoints/
 .python-version
 
-# Ingestion data & local artifacts
+# Ingestion source data & local artifacts.
+# Scoped to ingestion/ on purpose: a repo-wide *.json / *.csv rule also swallows
+# package-lock.json, tsconfig, and the i18n message files.
 ingestion/data/
-*.csv
-*.json
+ingestion/*.csv
+ingestion/*.json
 *.db
 *.sqlite
 *.parquet
-!package.json
-!apps/**/package.json
-!apps/**/tsconfig.json
-!apps/**/next.config.*
-!apps/**/eslint.config.*
-!apps/**/tailwind.config.*
-!apps/**/postcss.config.*
 
 # Env files
 .env
@@ -93,7 +88,6 @@ coverage/
 # Hosting 
 .vercel/
 
-!apps/frontend/messages/*.json
 
 # Thesis / private review materials
 *.doc

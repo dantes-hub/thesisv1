@@ -1,0 +1,24 @@
+{
+  "name": "eldertw",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Accessible bilingual RAG assistant for Taiwan labor insurance and pension questions",
+  "license": "MIT",
+  "workspaces": [
+    "apps/frontend",
+    "apps/retriever-api"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:api": "npm run dev --workspace retriever-api",
+    "dev:web": "npm run dev --workspace frontend",
+    "start:api": "npm run start --workspace retriever-api",
+    "start:web": "npm run start --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "lint": "npm run lint --workspace frontend",
+    "qdrant:up": "docker compose -f docker/docker-compose.yml up -d",
+    "qdrant:down": "docker compose -f docker/docker-compose.yml down"
+  }
+}

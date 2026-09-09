@@ -1,14 +1,17 @@
-# Core
-python-dotenv>=1.0.0
-openai>=1.2.0
+# Ingestion pipeline dependencies.
+# Pinned to major versions that match what the scripts were developed against.
+
+# Embeddings (text-embedding-3-large) and token-aware chunking
+langchain-openai>=0.1.0
+tiktoken>=0.7.0
+
+# Vector store
 qdrant-client>=1.8.0
-langchain>=0.2.0
-langchain-community>=0.2.0
 
-# Data processing
+# Source data: CSV parsing and HTML cleanup of scraped regulation text
 pandas>=2.2.0
-numpy>=1.26.0
-
-# Utilities
-tqdm>=4.66.0
+beautifulsoup4>=4.12.0
 requests>=2.31.0
+
+# Config
+python-dotenv>=1.0.0

@@ -52,6 +52,25 @@ def safe_json(resp: requests.Response):
     except Exception as e:
         return None, f"json_parse_error: {e}; raw={resp.text[:800]}"
 
+def post_with_retry(session, payload, max_retries=6):
+    """POST to /ask, backing off when the API rate-limits us.
+
+    The API caps /ask at a small number of requests per minute, so a 50-question
+    batch will hit 429 partway through. Without this the run would record empty
+    answers and quietly invalidate the evaluation.
+    """
+    delay = 5
+    for attempt in range(max_retries):
+        r = session.post(ASK_URL, json=payload, timeout=120)
+        if r.status_code != 429:
+            return r
+        wait = int(r.headers.get("Retry-After") or 0) or delay
+        print(f"[429] rate limited, waiting {wait}s (attempt {attempt + 1}/{max_retries})")
+        time.sleep(wait)
+        delay = min(delay * 2, 60)
+    return r
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["rag", "llm_only"], default=os.getenv("ASK_MODE", "rag"))
@@ -73,7 +92,7 @@ def main():
             row = {**item, "ts": ts, "ask_url": ASK_URL, "mode": args.mode}
 
             try:
-                r = session.post(ASK_URL, json=payload, timeout=120)
+                r = post_with_retry(session, payload)
                 row["http_status"] = r.status_code
                 row["http_ok"] = r.ok
                 row["latency_ms"] = int((time.time() - t0) * 1000)
