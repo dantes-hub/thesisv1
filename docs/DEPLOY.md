@@ -44,8 +44,19 @@ python migrate_to_cloud.py --target-url "https://….cloud.qdrant.io:6333" \
 ```
 
 It creates the collection with the same vector size and distance, recreates the `type`
-payload index that office lookups filter on, copies in batches, and verifies the final
-count matches. It refuses to write into a collection that already has points.
+payload index that office lookups filter on, uploads in batches with retry, and verifies
+the final count matches. It refuses to write into a collection that already has points.
+
+**If the upload times out** (likely on a slow or long-haul link — 3072-dim vectors are
+about 60KB each as JSON), shrink the batch and restart cleanly:
+
+```bash
+python migrate_to_cloud.py --target-url "…" --target-api-key "…" \
+                           --recreate --batch 8
+```
+
+`--recreate` drops the partially-filled collection first. `--timeout` (default 120s)
+raises the per-request limit if needed.
 
 ---
 
@@ -79,8 +90,16 @@ If `ok` is false, the Qdrant URL or key is wrong. Note the API URL for the next 
 
 ## 3. Vercel (frontend)
 
-1. **Add New → Project**, import the repo. Keep the root directory as the repo root —
-   `vercel.json` already points the build at the `frontend` workspace.
+1. **Add New → Project**, import the repo.
+
+   **Set Root Directory to the repo root, not `apps/frontend`.** Vercel auto-detects the
+   Next.js app and pre-fills `apps/frontend`, which breaks this build: `vercel.json`
+   already points at the workspace, and Vercel resolves `outputDirectory` *relative to*
+   Root Directory, so the two stack into `apps/frontend/apps/frontend/.next`. The build
+   succeeds and then fails with "The Next.js output directory was not found".
+
+   The root is required anyway — this is an npm workspaces monorepo, so `npm ci` has to
+   run there for the lockfile to resolve.
 2. Add one environment variable:
 
    | Variable | Value |
