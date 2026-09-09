@@ -90,16 +90,17 @@ If `ok` is false, the Qdrant URL or key is wrong. Note the API URL for the next 
 
 ## 3. Vercel (frontend)
 
-1. **Add New → Project**, import the repo.
+1. **Add New → Project**, import the repo. Leave **Root Directory** as the
+   auto-detected `apps/frontend`.
 
-   **Set Root Directory to the repo root, not `apps/frontend`.** Vercel auto-detects the
-   Next.js app and pre-fills `apps/frontend`, which breaks this build: `vercel.json`
-   already points at the workspace, and Vercel resolves `outputDirectory` *relative to*
-   Root Directory, so the two stack into `apps/frontend/apps/frontend/.next`. The build
-   succeeds and then fails with "The Next.js output directory was not found".
+   Vercel has native npm-workspaces support: it finds the workspace root, installs from
+   the repo-root lockfile, builds the frontend, and picks up `.next` inside the root
+   directory. `vercel.json` only declares the framework and deliberately does not set
+   `installCommand`, `buildCommand` or `outputDirectory` — Vercel resolves
+   `outputDirectory` *relative to* Root Directory, so hardcoding `apps/frontend/.next`
+   produces `apps/frontend/apps/frontend/.next` and the deploy fails after a successful
+   build with "The Next.js output directory was not found".
 
-   The root is required anyway — this is an npm workspaces monorepo, so `npm ci` has to
-   run there for the lockfile to resolve.
 2. Add one environment variable:
 
    | Variable | Value |
