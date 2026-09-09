@@ -130,3 +130,9 @@ llm_only_*
 *.mov
 *.wav
 *.mp3
+
+# Published evaluation evidence. These are frozen snapshots of specific runs and
+# are committed on purpose, so they override the generated-artifact rules above.
+# Private review materials (Turnitin, raw rating sheets) stay excluded.
+!evaluation/
+!evaluation/**

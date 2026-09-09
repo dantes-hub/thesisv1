@@ -1,0 +1,24 @@
+Baseline comparison summary (RAG vs LLM-only)
+
+Setup
+- Query set: Q1-Q12, identical to Verification Set B.
+- RAG condition: preserved run from 2025-12-17 using the deployed /ask endpoint and retrieved official sources.
+- Baseline condition: rerun of the same Q1-Q12 set on 2026-03-31 using mode=llm_only, which disables retrieval and asks the same model to answer from general knowledge only.
+- Model in baseline: gpt-4o, temperature 0.2.
+
+Observed pattern
+- The LLM-only baseline achieved 100% HTTP success and lower mean latency (3495.3 ms), but returned 0 retrieved sources for all 12 queries by design.
+- In the manual side-by-side comparison, the RAG system was judged better in all 12/12 cases on the combined criteria of source visibility, domain specificity, and safe handling of incomplete evidence.
+- The difference was especially clear for office-lookup cases (Q1, Q2, Q12), where RAG returned exact address, phone, hours, and official links, while the baseline produced only generic guidance.
+- The difference was also clear for incomplete-evidence and boundary cases (Q3, Q6, Q11): RAG preserved verified details and refused to speculate when coverage was incomplete, whereas the baseline produced ungrounded generalizations or calculation-oriented guidance without retrieved support.
+
+Thesis-ready paragraph
+To provide a small comparative sanity check, this thesis additionally compared the deployed RAG system against an LLM-only baseline using the same fixed Q1-Q12 query set. In the baseline condition, retrieval was disabled and the model was asked to answer from general knowledge alone under the same low-temperature setting. The baseline achieved a 100% HTTP success rate and lower mean latency (3495.3 ms versus 4138.6 ms for the RAG verification run), but it returned no retrieved sources and therefore offered no evidence traceability. In a manual side-by-side comparison, the RAG system was judged better in all 12 of 12 cases on the combined criteria of source visibility, domain specificity, and safe handling of incomplete evidence. The difference was most pronounced for office-lookup queries (Q1, Q2, Q12), where RAG returned exact office details and official links, and for boundary cases such as Q3, Q6, and Q11, where RAG preserved verified details or explicitly reported insufficient evidence instead of relying on unsupported general knowledge.
+
+Suggested compact table rows
+- Q1 (Office lookup): RAG better; exact Taichung office details with official link vs generic suggestion to check the website.
+- Q3 (Disability benefit days): RAG better; preserves verified Grade 15 value and flags missing Grade 1 coverage vs vague unsupported explanation.
+- Q6 (Old-age benefit types): RAG better; safe insufficiency report vs confident ungrounded category list.
+- Q10 (Penalty guidance): RAG better; cites the official penalty-guidance page vs generic compliance advice.
+- Q11 (Personal calculation): RAG better; refuses to compute and refers to official tools vs ungrounded calculation-oriented guidance.
+- Q12 (English office lookup): RAG better; exact address/phone/hours in English vs generic statement that details are unavailable.

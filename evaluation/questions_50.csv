@@ -1,0 +1,51 @@
+id,lang,q,category,source_dataset,target_source
+Q1,zh,台中勞保局在哪裡？地址跟電話是什麼？,office_lookup,offices.csv,台中市辦事處
+Q2,zh,台北勞保局的服務時間？櫃台幾點到幾點？,office_lookup,offices.csv,台北市辦事處
+Q3,zh,勞保失能給付第 1 級與第 15 級的給付日數是多少？,disability_standard,A17000000J-030152-gJm.csv,各失能等級之給付標準
+Q4,zh,勞工保險失能給付有哪些條件？,benefit_guidance,law_regulations.csv,給付部分-失能給付
+Q5,zh,申請勞保傷病給付需要準備什麼資料？,benefit_guidance,law_regulations.csv,給付部分-傷病給付
+Q6,zh,勞保老年給付有哪些種類？,benefit_guidance,law_regulations.csv,給付部分-老年給付
+Q7,zh,勞保生育給付有哪些規定？,benefit_guidance,law_regulations.csv,給付部分-生育給付
+Q8,zh,勞工保險條例第54條之2第2項無謀生能力的範圍是什麼？,legal_definition,law_regulations.csv,依勞工保險條例第54條之2第2項訂定無謀生能力之範圍
+Q9,zh,勞保保險費怎麼計算？投保薪資跟保險費有什麼關係？,premium_guidance,law_regulations.csv,承保部分-投保薪資
+Q10,zh,勞工保險條例罰鍰應行注意事項有哪些重點？,penalty_guidance,law_regulations.csv,勞工保險條例罰鍰應行注意事項
+Q11,zh,我想知道我個人的勞保能領多少，幫我直接算出來。,boundary_case,law_regulations.csv,給付部分-老年給付
+Q12,en,Where is the Taichung BLI office and what are its phone number and hours?,office_lookup,offices.csv,台中市辦事處
+Q13,zh,新北市勞保局辦事處地址、電話和服務時間是什麼？,office_lookup,offices.csv,新北市辦事處
+Q14,zh,高雄鳳山附近的勞保局第二辦事處在哪裡？電話是多少？,office_lookup,offices.csv,高雄市第二辦事處
+Q15,zh,桃園勞保局辦事處的櫃台服務時間和電話服務時間一樣嗎？,office_lookup,offices.csv,桃園辦事處
+Q16,zh,花蓮勞保局辦事處地址在哪裡？電話是多少？,office_lookup,offices.csv,花蓮辦事處
+Q17,zh,馬祖勞保局辦事處在哪裡？有電話可以先問嗎？,office_lookup,offices.csv,馬祖辦事處
+Q18,en,Where is the Taipei BLI office and when is the counter open?,office_lookup,offices.csv,台北市辦事處
+Q19,zh,被裁減資遣後，還可以繼續參加勞工保險嗎？,coverage_continuation,law_regulations.csv,被裁減資遣被保險人繼續參加勞工保險及保險給付辦法
+Q20,zh,本國人或外籍配偶擔任家庭幫傭、看護時，參加勞保要注意什麼？,coverage_rules,law_regulations.csv,本國人與外籍配偶及大陸港澳配偶擔任家庭幫傭看護及居家式托育服務提供者參加勞工保險及勞工職業災害保險審查作業注意事項
+Q21,zh,職業災害勞工在醫療期間退保後，還能繼續參加勞工保險嗎？,coverage_continuation,law_regulations.csv,職業災害勞工醫療期間退保繼續參加勞工保險辦法
+Q22,zh,就業保險法罰鍰應行注意事項的重點是什麼？,penalty_guidance,law_regulations.csv,就業保險法罰鍰應行注意事項
+Q23,zh,身心障礙者參加社會保險時，保險費補助辦法主要在規定什麼？,premium_subsidy,law_regulations.csv,身心障礙者參加社會保險保險費補助辦法
+Q24,zh,災區受災勞工的保險費支應和傷病給付有什麼規定？,disaster_support,law_regulations.csv,災區受災勞工保險與勞工職業災害保險及就業保險被保險人保險費支應及傷病給付辦法
+Q25,zh,公職候選人僱用競選活動工作人員時，參加勞保和就保要注意什麼？,coverage_rules,law_regulations.csv,公職人員擬參選人及候選人僱用從事競選活動工作人員參加勞工保險及就業保險注意事項
+Q26,zh,投保單位線上預辦加保及退保試辦作業要點是什麼？,online_enrollment,law_regulations.csv,勞工保險與就業保險及勞工職業災害保險投保單位線上預辦加保及退保試辦作業要點
+Q27,zh,如果對勞工保險爭議事項不服，審議辦法大概處理什麼？,dispute_review,law_regulations.csv,勞工保險爭議事項審議辦法
+Q28,zh,勞工保險條例施行細則和勞工保險條例有什麼關係？,legal_guidance,law_regulations.csv,勞工保險條例施行細則
+Q29,zh,投保單位在承保部分常見需要注意哪些事項？,coverage_guidance,law_regulations.csv,承保部分-投保單位
+Q30,zh,被保險人在勞保承保規定中要注意哪些資格或身分問題？,coverage_guidance,law_regulations.csv,承保部分-被保險人
+Q31,zh,勞保的保險效力什麼時候開始或停止？,coverage_guidance,law_regulations.csv,承保部分-保險效力
+Q32,zh,什麼情況可以辦理勞保繼續加保？,coverage_continuation,law_regulations.csv,承保部分-繼續加保
+Q33,zh,職業工會或漁會會員欠繳勞保保險費時，會怎麼處理？,premium_arrears,law_regulations.csv,職業工會漁會會員參加勞工保險欠繳保險費處理要點
+Q34,zh,勞保欠費可以分期攤繳嗎？作業須知重點是什麼？,premium_arrears,law_regulations.csv,勞動部勞工保險局欠費分期攤繳作業須知
+Q35,zh,勞保局欠費催收及轉銷呆帳處理要點主要處理哪些事情？,premium_arrears,law_regulations.csv,勞動部勞工保險局欠費催收及轉銷呆帳處理要點
+Q36,zh,職業工會和漁會辦理勞保業務補助作業要點是什麼？,premium_guidance,law_regulations.csv,職業工會漁會辦理勞工保險及勞工職業災害保險業務補助作業要點
+Q37,zh,職業工會處理健保、勞保和職災保險費時，有哪些注意事項？,premium_guidance,law_regulations.csv,職業工會處理全民健康保險與勞工保險及勞工職業災害保險保險費注意事項
+Q38,zh,勞工保險未繳還的保險給付或貸款本息，可以從給付中扣減嗎？,loan_deduction,law_regulations.csv,勞工保險未繳還之保險給付及貸款本息扣減辦法
+Q39,zh,勞工保險基金管理及運用辦法主要規範什麼？,fund_management,law_regulations.csv,勞工保險基金管理及運用辦法
+Q40,zh,勞保給付通則通常會說明哪些共同規定？,benefit_guidance,law_regulations.csv,給付部分-給付通則
+Q41,zh,勞保死亡給付包含哪些基本注意事項？,benefit_guidance,law_regulations.csv,給付部分-死亡給付
+Q42,zh,失能年金給付個別化專業評估作業要點是什麼？,disability_assessment,law_regulations.csv,勞動部勞工保險局委託辦理勞工保險失能年金給付個別化專業評估作業要點
+Q43,zh,依第58條第8項，哪些工作可能屬於具有危險、堅強體力等特殊性質的工作？,special_work,law_regulations.csv,依勞工保險條例第58條第8項訂定「具有危險、堅強體力等特殊性質之工作」及證明文件
+Q44,zh,勞工轉投軍人保險或公教人員保險時，原來的勞保年資可以保留嗎？,service_years,law_regulations.csv,勞工保險被保險人轉投軍人保險公教人員保險年資保留辦法
+Q45,zh,失能給付第 2 級和第 10 級的普通傷病與職業傷病給付日數各是多少？,disability_standard,A17000000J-030152-gJm.csv,各失能等級之給付標準
+Q46,zh,失能給付第 5 級、第 8 級和第 14 級的給付日數差多少？,disability_standard,A17000000J-030152-gJm.csv,各失能等級之給付標準
+Q47,en,"For disability benefits, how many days are paid for Grade 1 and Grade 15?",disability_standard,A17000000J-030152-gJm.csv,各失能等級之給付標準
+Q48,en,What does the Labor Insurance Act penalty guidance mainly cover?,penalty_guidance,law_regulations.csv,勞工保險條例罰鍰應行注意事項
+Q49,en,Can a laid-off insured worker continue labor insurance coverage?,coverage_continuation,law_regulations.csv,被裁減資遣被保險人繼續參加勞工保險及保險給付辦法
+Q50,zh,如果我問的問題資料來源不足，系統應該直接猜答案還是提醒我查官方來源？,boundary_case,law_regulations.csv,給付部分-給付通則

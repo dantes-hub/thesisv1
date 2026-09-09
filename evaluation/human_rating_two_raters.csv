@@ -1,0 +1,51 @@
+﻿ID,Rater 1 outcome,Moby outcome,Agree
+Q1,RAG,RAG,True
+Q2,RAG,RAG,True
+Q3,RAG,RAG,True
+Q4,Tie,RAG,False
+Q5,LLM-only,RAG,False
+Q6,LLM-only,Tie,False
+Q7,LLM-only,Cannot judge,False
+Q8,Tie,RAG,False
+Q9,RAG,RAG,True
+Q10,LLM-only,RAG,False
+Q11,LLM-only,Tie,False
+Q12,RAG,RAG,True
+Q13,RAG,RAG,True
+Q14,RAG,RAG,True
+Q15,RAG,RAG,True
+Q16,RAG,RAG,True
+Q17,RAG,RAG,True
+Q18,RAG,RAG,True
+Q19,RAG,RAG,True
+Q20,Cannot judge,RAG,False
+Q21,RAG,LLM-only,False
+Q22,LLM-only,RAG,False
+Q23,RAG,RAG,True
+Q24,RAG,RAG,True
+Q25,RAG,RAG,True
+Q26,RAG,RAG,True
+Q27,RAG,RAG,True
+Q28,LLM-only,RAG,False
+Q29,RAG,RAG,True
+Q30,RAG,RAG,True
+Q31,RAG,RAG,True
+Q32,RAG,RAG,True
+Q33,RAG,RAG,True
+Q34,RAG,RAG,True
+Q35,RAG,RAG,True
+Q36,RAG,RAG,True
+Q37,RAG,RAG,True
+Q38,RAG,RAG,True
+Q39,LLM-only,RAG,False
+Q40,LLM-only,RAG,False
+Q41,LLM-only,RAG,False
+Q42,RAG,RAG,True
+Q43,LLM-only,RAG,False
+Q44,RAG,RAG,True
+Q45,RAG,RAG,True
+Q46,RAG,RAG,True
+Q47,RAG,RAG,True
+Q48,Tie,RAG,False
+Q49,RAG,RAG,True
+Q50,LLM-only,Cannot judge,False

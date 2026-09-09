@@ -52,15 +52,33 @@ retrieval disabled.
 
 The gap is widest on office-location and exact-table questions, where the RAG system
 returns verifiable specifics and the baseline offers generic advice to "check the
-official website." A separate two-rater human comparison on a 12-question subset
-preferred the RAG answers in 12/12 cases on source visibility, domain specificity, and
-safe handling of incomplete evidence.
+official website."
 
-Known limitations: relevant sources are sometimes retrieved but not ranked first when
+Not every question goes through the language model. Of the 50:
+
+| Route | Count | Behavior |
+|---|---:|---|
+| `rag` | 37 | Retrieve, re-rank, generate a grounded answer |
+| `office_lookup` | 9 | Return a structured office record; no generation |
+| `disability_standard_lookup` | 4 | Return the exact benefit-day figure from a fixed table |
+
+The 13 non-generative answers are precisely the ones where a hallucinated address or
+day count would cause real harm.
+
+**Human comparison is weaker and reported as such.** A single-rater side-by-side on the
+12-question subset preferred the RAG answer in 12/12 cases. A separate two-rater
+comparison across all 50 questions reached only 66% raw agreement (Cohen's κ = 0.105 —
+slight), so the subjective preference data does not establish much on its own. The
+objective retrieval metrics above carry the argument.
+
+Other limitations: relevant sources are sometimes retrieved but not ranked first when
 statute pages and administrative interpretations overlap semantically; English retrieval
-is weaker than Chinese; and boundary/safety questions are hard to score by
-expected-source matching, since the correct behavior is often to decline rather than to
-retrieve.
+is weaker than Chinese; boundary/safety questions are hard to score by expected-source
+matching, since the correct behavior is often to decline rather than to retrieve; and
+each condition was run once, so no variance is reported.
+
+Raw runs, per-question scoring, the rating data, and a script that recomputes every
+figure above are in [`evaluation/`](evaluation/).
 
 ---
 
@@ -125,7 +143,7 @@ npm run qdrant:up
 
 ### 4. Ingest the source data
 
-The government source CSVs are not committed to this repository. Place them in
+The government source CSVs are not redistributed here. Place them in
 `ingestion/data/` and run:
 
 ```bash
