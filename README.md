@@ -1,5 +1,10 @@
 # Elder Labor Assistant (ELDERv1)
 
+**[Live demo →](https://thesisv1-frontend-mfyb.vercel.app/zh)**  ·  [Evaluation](evaluation/)  ·  [Deployment runbook](docs/DEPLOY.md)
+
+> Hosted on free tiers, so the API sleeps when idle — the first question may take
+> up to a minute while it wakes. Later questions answer in about 1–2 seconds.
+
 An accessible, bilingual Retrieval-Augmented Generation (RAG) assistant that answers
 Taiwan labor-insurance, pension, and senior-employment questions for older adults.
 
@@ -298,6 +303,10 @@ see `.github/workflows/ci.yml`.
 Render (API) + Qdrant Cloud (vectors), all on free tiers. It covers copying the existing
 vectors to the cloud without paying to re-embed them, the build-time/CORS ordering
 between the two apps, and capping spend.
+
+The live demo runs on Vercel + Render + Qdrant Cloud with `CHAT_MODEL=gpt-4o-mini`
+to keep a public URL cheap. The evaluation below was run against `gpt-4o`, which
+remains the code default.
 
 Set `NODE_ENV=production` on the API. This disables the debug route and stops raw
 exception text from being returned to clients.

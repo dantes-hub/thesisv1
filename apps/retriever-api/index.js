@@ -10,6 +10,7 @@ import { QdrantClient } from '@qdrant/js-client-rest';
 import fetch from 'node-fetch';
 import multer from "multer";
 import { toFile } from "openai/uploads";
+import { clientKey } from './lib/client-key.js';
 import {
   dedupBy,
   simpleMMR,
@@ -28,9 +29,11 @@ const app = express();
 
 const IS_PROD = process.env.NODE_ENV === 'production';
 
-// Behind a single reverse proxy (Render/Fly/Nginx) so rate limiting sees the
-// real client IP instead of the proxy's.
+// Behind a reverse proxy (Render/Fly/Nginx), so honour X-Forwarded-* for req.ip,
+// protocol and host.
 app.set('trust proxy', 1);
+
+
 
 // CORS: only the origins we ship. Every endpoint below spends OpenAI /
 // ElevenLabs credits per call, so a wildcard origin is a billing hole.
@@ -56,6 +59,7 @@ const limiter = (windowMs, max, message) => rateLimit({
   max,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: clientKey,
   message: { error: 'rate_limited', detail: message },
 });
 
