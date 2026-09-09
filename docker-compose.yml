@@ -1,0 +1,61 @@
+# Full stack: vector store, API, and frontend.
+#
+#   cp apps/retriever-api/.env.example apps/retriever-api/.env   # add your keys
+#   docker compose up --build
+#
+# Then open http://localhost:3000. To ingest data into the running Qdrant, see
+# the "Ingest the source data" section of the README.
+#
+# For day-to-day development prefer `npm run qdrant:up` (Qdrant only) plus
+# `npm run dev:api` / `npm run dev:web`, which give you hot reload.
+
+name: eldertw
+
+services:
+  qdrant:
+    # Pinned to match the @qdrant/js-client-rest major/minor used by the API.
+    image: qdrant/qdrant:v1.15.4
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrantdata:/qdrant/storage
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/retriever-api/Dockerfile
+    ports:
+      - "8000:8000"
+    # Supplies OPENAI_API_KEY and the optional ElevenLabs settings.
+    # Copy apps/retriever-api/.env.example to .env first.
+    env_file:
+      - apps/retriever-api/.env
+    environment:
+      NODE_ENV: production
+      # Service name on the compose network, not localhost.
+      QDRANT_URL: http://qdrant:6333
+      # The browser origin, which is what the CORS check actually sees.
+      ALLOWED_ORIGINS: http://localhost:3000
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        # Baked into the client bundle at build time. This is the URL the
+        # browser calls, so it is the host-published address of the API, not
+        # the internal service name.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  qdrantdata:

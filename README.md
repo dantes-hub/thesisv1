@@ -169,6 +169,42 @@ Open http://localhost:3000 — it redirects to `/zh`. Use `/en` for English.
 
 ---
 
+## Run with Docker
+
+The whole stack — Qdrant, API, and frontend — comes up with one command:
+
+```bash
+cp apps/retriever-api/.env.example apps/retriever-api/.env   # add your OPENAI_API_KEY
+docker compose up --build
+```
+
+Then open http://localhost:3000. Ingest data into the running Qdrant using the
+ingestion steps above (the containers expose Qdrant on its usual port).
+
+Two things worth knowing about the images:
+
+- `NEXT_PUBLIC_API_URL` is **baked into the frontend at build time**, because Next.js
+  inlines `NEXT_PUBLIC_*` values into the client bundle. Setting it at runtime on an
+  already-built image has no effect. Compose passes it as a build argument; override it
+  for a deployed build:
+
+  ```bash
+  NEXT_PUBLIC_API_URL=https://api.example.com docker compose build web
+  ```
+
+- It is the URL the **browser** calls, so it must be the publicly reachable API address,
+  not the internal compose service name. The API reaches Qdrant the other way round, at
+  `http://qdrant:6333` on the compose network.
+
+Both images run as a non-root user, install production dependencies only, and the
+frontend ships as a Next.js standalone bundle. The API image includes a healthcheck
+against `/health`.
+
+For day-to-day development prefer `npm run qdrant:up` plus `npm run dev:api` /
+`npm run dev:web`, which give you hot reload.
+
+---
+
 ## API
 
 | Method | Endpoint | Purpose | Rate limit |

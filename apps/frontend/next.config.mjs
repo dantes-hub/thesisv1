@@ -9,12 +9,11 @@ const monorepoRoot = path.resolve(__dirname, "..", "..");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: true,
-  // Important in monorepos:
+  // Self-contained server bundle for the Docker image. Without this the runtime
+  // stage would need the full node_modules tree.
+  output: "standalone",
+  // The workspace root, so tracing picks up hoisted dependencies.
   outputFileTracingRoot: monorepoRoot,
-  // (optional but helpful)
-  experimental: {
-    // leave other experiments if you actually use them, but NOT typedRoutes here
-  },
 };
 
 export default nextConfig;
