@@ -8,6 +8,31 @@ function hashKey(text, lang) {
   return `${lang}::${text.slice(0, 500)}`;
 }
 
+// Message text (both the user's own input and model output) is injected as HTML
+// so that URLs become clickable. Escape first, otherwise anything that looks
+// like a tag is executed as markup.
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// URL boundary characters. A link stops at whitespace, markup, or sentence
+// punctuation in either script, so a trailing 。 or ) is not pulled into the href.
+const URL_STOP = "\\s<\u3002\uff0c\u3001\uff1b\uff1a\uff01\uff1f\uff09\u300d\u300f";
+const URL_STOP_TRAILING = URL_STOP + ".,;:!?)\\]}'\"";
+const URL_RE = new RegExp(`(https?://[^${URL_STOP}]+[^${URL_STOP_TRAILING}])`, "g");
+
+function linkify(text) {
+  // Runs on already-escaped text, so a URL cannot carry markup of its own.
+  return escapeHtml(text).replace(
+    URL_RE,
+    '<a href="$1" target="_blank" rel="noopener noreferrer" class="underline text-sky-400 hover:text-sky-300">$1</a>'
+  );
+}
 export default function Page({ params }) {
   const { locale: rawLocale } = use(params);
   const locale = rawLocale === "en" ? "en" : "zh";
@@ -323,12 +348,7 @@ const setStatus = (i, s) => setTtsStatus(prev => ({ ...prev, [i]: s }));
               >
                   <div
                         className={`${big ? "big-text" : ""} whitespace-pre-wrap`}
-                        dangerouslySetInnerHTML={{
-                          __html: m.content.replace(
-                            /(https?:\/\/[^\s]+)/g,
-                            '<a href="$1" target="_blank" rel="noopener noreferrer" class="underline text-sky-400 hover:text-sky-300">$1</a>'
-                          ),
-                        }}
+                        dangerouslySetInnerHTML={{ __html: linkify(m.content) }}
                       />
 
                 {!isUser && (

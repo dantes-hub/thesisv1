@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -11,10 +12,45 @@ import multer from "multer";
 import { toFile } from "openai/uploads";
 
 const app = express();
-app.use(cors());
+
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+// Behind a single reverse proxy (Render/Fly/Nginx) so rate limiting sees the
+// real client IP instead of the proxy's.
+app.set('trust proxy', 1);
+
+// CORS: only the origins we ship. Every endpoint below spends OpenAI /
+// ElevenLabs credits per call, so a wildcard origin is a billing hole.
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin(origin, cb) {
+    // No Origin header: curl, health checks, server-to-server. Allowed.
+    if (!origin) return cb(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(new Error('origin_not_allowed'));
+  },
+}));
+
 app.use(express.json({ limit: '1mb' }));
 
+// Rate limits, per IP. The paid endpoints get tighter budgets than the rest.
+const limiter = (windowMs, max, message) => rateLimit({
+  windowMs,
+  max,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'rate_limited', detail: message },
+});
 
+const askLimiter = limiter(60 * 1000, 10, 'Too many questions. Wait a minute and try again.');
+const ttsLimiter = limiter(60 * 1000, 10, 'Too many speech requests. Wait a minute and try again.');
+const transcribeLimiter = limiter(60 * 1000, 5, 'Too many recordings. Wait a minute and try again.');
+// Blanket ceiling so no single IP can hammer the process.
+app.use(limiter(60 * 1000, 60, 'Too many requests.'));
 const uploadsDir = path.join(process.cwd(), "uploads");
 try { fs.mkdirSync(uploadsDir, { recursive: true }); } catch {}
 
@@ -206,13 +242,21 @@ function buildPrompt({ q, lang, contexts }) {
   }
   
 
+
+// Exception text can carry keys, hostnames, and stack detail, so only
+// non-production callers see it. Everything is logged server-side regardless.
+function safeDetail(e) {
+  return IS_PROD ? undefined : String(e?.message || e);
+}
+
 //  endpoints 
 app.get('/health', async (_req, res) => {
   try {
     const info = await qdrant.getCollections();
     res.json({ ok: true, collections: info.collections?.map(c => c.name) || [] });
   } catch (e) {
-    res.status(500).json({ ok: false, error: String(e) });
+    console.error('health check failed:', e);
+    res.status(500).json({ ok: false, error: 'qdrant_unreachable', detail: safeDetail(e) });
   }
 });
 
@@ -360,7 +404,7 @@ function buildDisabilityStandardPayload(levels, lang, mode) {
   };
 }
 
-app.post('/ask', async (req, res) => {
+app.post('/ask', askLimiter, async (req, res) => {
   try {
     const OFFICE_REGEX = /(辦事處|分局|服務據點|地址|地點|位置|電話|開放時間|服務時間|office|branch|location|address|hours|phone)/i;
     
@@ -627,22 +671,24 @@ app.post('/ask', async (req, res) => {
     return res.json(payload);
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: 'server_error', detail: String(e) });
+    return res.status(500).json({ error: 'server_error', detail: safeDetail(e) });
   }
 });
 
-// look at few points
-app.get('/debug/scroll', async (_req, res) => {
-  try {
-    const r = await qdrant.scroll(COLLECTION, { with_payload: true, limit: 3 });
-    res.json(r);
-  } catch (e) {
-    res.status(500).json({ error: String(e) });
-  }
-});
+// Dumps raw indexed payloads, so it stays off in production.
+if (!IS_PROD) {
+  app.get('/debug/scroll', async (_req, res) => {
+    try {
+      const r = await qdrant.scroll(COLLECTION, { with_payload: true, limit: 3 });
+      res.json(r);
+    } catch (e) {
+      res.status(500).json({ error: String(e) });
+    }
+  });
+}
 
 // tts 
-app.post('/tts', async (req, res) => {
+app.post('/tts', ttsLimiter, async (req, res) => {
     try {
       const text = String(req.body?.text || '').trim().slice(0, 1200); // keep short for latency
       const lang = req.body?.lang === 'en' ? 'en' : 'zh';
@@ -701,7 +747,7 @@ app.post('/tts', async (req, res) => {
       return res.send(buf);
     } catch (e) {
       console.error(e);
-      return res.status(500).json({ error: 'server_error', detail: String(e) });
+      return res.status(500).json({ error: 'server_error', detail: safeDetail(e) });
     }
   });
 
@@ -719,7 +765,7 @@ app.post('/tts', async (req, res) => {
   };
 
 
-app.post("/transcribe", upload.single("audio"), async (req, res) => {
+app.post("/transcribe", transcribeLimiter, upload.single("audio"), async (req, res) => {
   let tmpPath;
   try {
     if (!req.file) {
@@ -750,10 +796,29 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
 
   } catch (err) {
     console.error("Transcription failed:", err);
-    return res.status(500).json({ error: "transcription_failed", detail: String(err?.message || err) });
+    return res.status(500).json({ error: "transcription_failed", detail: safeDetail(err) });
   } finally {
     try { if (tmpPath) fs.unlinkSync(tmpPath); } catch {}
   }
 });
 
-app.listen(PORT, () => console.log(`retriever-api on :${PORT}`));
+// Terminal error handler: CORS rejections and multer upload failures land here
+// and would otherwise render an HTML stack trace.
+app.use((err, _req, res, _next) => {
+  if (err?.message === 'origin_not_allowed') {
+    return res.status(403).json({ error: 'origin_not_allowed' });
+  }
+  if (err?.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({ error: 'file_too_large', detail: 'Audio must be under 15MB.' });
+  }
+  if (err?.message === 'Unsupported audio type') {
+    return res.status(415).json({ error: 'unsupported_audio_type' });
+  }
+  console.error('unhandled error:', err);
+  return res.status(500).json({ error: 'server_error', detail: safeDetail(err) });
+});
+
+app.listen(PORT, () => {
+  console.log(`retriever-api on :${PORT}`);
+  console.log(`CORS allowed origins: ${ALLOWED_ORIGINS.join(', ')}`);
+});
