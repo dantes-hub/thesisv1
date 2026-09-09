@@ -136,3 +136,7 @@ llm_only_*
 # Private review materials (Turnitin, raw rating sheets) stay excluded.
 !evaluation/
 !evaluation/**
+
+# README screenshots are documentation, not generated run artifacts.
+!docs/screenshots/
+!docs/screenshots/*.jpg

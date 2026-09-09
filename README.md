@@ -8,6 +8,11 @@ and English, every answer is grounded in official government sources, and the in
 is designed around older users: large text, a high-contrast mode, one-tap FAQ buttons,
 voice input, and spoken answers.
 
+
+| Grounded answer with citations | High-contrast mode |
+|---|---|
+| ![Answer view](docs/screenshots/answer-zh.jpg) | ![High contrast](docs/screenshots/high-contrast.jpg) |
+
 ---
 
 ## Why this is not just a chatbot wrapper
@@ -271,13 +276,39 @@ RATE_LIMIT_ASK=100 npm run dev:api
 
 ---
 
+## Tests
+
+The retrieval logic — MMR re-ranking, source dedup, city detection, disability-grade
+parsing, and office-record normalisation — lives in `apps/retriever-api/lib/retrieval.js`,
+free of Express, OpenAI and Qdrant so it can be tested directly:
+
+```bash
+npm test --workspace retriever-api
+```
+
+14 tests, no test framework dependency (Node's built-in runner). CI runs these plus
+lint, the frontend build, the ingestion scripts, and both Docker images on every push —
+see `.github/workflows/ci.yml`.
+
+---
+
 ## Deployment notes
+
+**Full step-by-step runbook: [`docs/DEPLOY.md`](docs/DEPLOY.md)** — Vercel (frontend) +
+Render (API) + Qdrant Cloud (vectors), all on free tiers. It covers copying the existing
+vectors to the cloud without paying to re-embed them, the build-time/CORS ordering
+between the two apps, and capping spend.
 
 Set `NODE_ENV=production` on the API. This disables the debug route and stops raw
 exception text from being returned to clients.
 
 Set `ALLOWED_ORIGINS` to the deployed frontend origin. Leaving it at the default means
 the deployed API rejects your own frontend.
+
+A public URL spends real API credits on every question. Set a hard monthly spend cap on
+the OpenAI account — the per-IP rate limits slow abuse but do not cap it. Setting
+`CHAT_MODEL=gpt-4o-mini` cuts per-query cost roughly 17x for a demo; the default stays
+`gpt-4o`, which is the model the evaluation was run against.
 
 ---
 

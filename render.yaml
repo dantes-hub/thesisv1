@@ -1,0 +1,50 @@
+# Render blueprint for the retriever API.
+# Deploy: Render dashboard -> New -> Blueprint -> point at this repo.
+#
+# Values marked `sync: false` are NOT stored in this file. Render prompts for
+# them on first deploy, so no secret is ever committed.
+
+services:
+  - type: web
+    name: eldertw-api
+    runtime: docker
+    repo: https://github.com/dantes-hub/thesisv1
+    dockerfilePath: ./apps/retriever-api/Dockerfile
+    # Build context is the repo root: npm workspaces resolve from there.
+    dockerContext: .
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # The deployed frontend origin. Update this to the real Vercel URL after
+      # the first frontend deploy, otherwise the API rejects your own site.
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+      # Qdrant Cloud cluster URL and key.
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+
+      - key: OPENAI_API_KEY
+        sync: false
+
+      # gpt-4o is the evaluated default; the demo runs mini to cut cost ~17x.
+      - key: CHAT_MODEL
+        value: gpt-4o-mini
+
+      - key: COLLECTION
+        value: labor_assistant_v1
+
+      # Optional: voice answers are disabled if these are unset.
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: TTS_VOICE_ZH
+        sync: false
+      - key: TTS_VOICE_EN
+        sync: false
