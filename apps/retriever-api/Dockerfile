@@ -13,7 +13,11 @@ RUN npm ci --omit=dev --workspace retriever-api
 FROM node:20-alpine AS runner
 ENV NODE_ENV=production
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy the whole installed tree, not just /app/node_modules. npm workspaces
+# hoist most packages to the root but keep any that cannot be hoisted (a pinned
+# version conflicting with another dependency) in the workspace's own
+# node_modules, and those would otherwise be missing at runtime.
+COPY --from=deps /app ./
 COPY apps/retriever-api ./apps/retriever-api
 
 # index.js resolves uploads/ and logs/ relative to cwd.
