@@ -31,6 +31,12 @@ The retrieval layer does more than a single vector lookup:
 - **Built-in ablation mode.** `mode=llm_only` disables retrieval so the same question set
   can be run against a bare-model baseline. This is what the evaluation below uses.
 
+The interface is built for the audience rather than for a demo reel: 18px minimum body
+text, a big-text mode (30px, on by default), a true high-contrast theme, 44px+ touch
+targets, visible focus rings, a print stylesheet, voice input and spoken answers, and
+saved display preferences. Themes are driven by CSS custom properties, so restyling
+cannot silently break contrast mode.
+
 ---
 
 ## Evaluation
@@ -98,7 +104,7 @@ figure above are in [`evaluation/`](evaluation/).
 
 | Component | Stack | Path |
 |---|---|---|
-| Frontend | Next.js 15 (App Router), React 19, Tailwind | `apps/frontend` |
+| Frontend | Next.js 16 (App Router), React 19, TypeScript | `apps/frontend` |
 | Retriever API | Express 5, OpenAI, Qdrant, ElevenLabs | `apps/retriever-api` |
 | Ingestion | Python, pandas, LangChain, tiktoken | `ingestion` |
 | Vector store | Qdrant (Docker) | `docker` |
@@ -216,6 +222,18 @@ For day-to-day development prefer `npm run qdrant:up` plus `npm run dev:api` /
 
 `mode` accepts `rag` (default) or `llm_only` for the ablation baseline.
 `/debug/scroll` exists in development only and is not mounted in production.
+
+`/ask` responses carry a `route` field naming which path answered:
+
+| `route` | Meaning |
+|---|---|
+| `rag` | Retrieved, re-ranked, and generated |
+| `office_lookup` | Structured office record; also returns an `office` object with `name`, `address`, `phone`, `hours`, `url`, and `map_url` |
+| `disability_standard_lookup` | Exact benefit-day figure from a fixed table |
+
+The two lookup routes never call the language model, so the answers that would do
+the most harm if hallucinated — addresses and benefit day counts — are served
+deterministically.
 
 Limits are per IP. Answers and generated audio are both LRU-cached, so repeated
 questions do not re-bill.

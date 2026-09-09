@@ -104,7 +104,8 @@ def build_office_text(row):
     dist    = pick(row, "district")
 
     head = f"{name}" if name else "辦事處"
-    addr_line = f"地址：{zipc} {city or ''}{dist or ''}{address}".strip()
+    city_part = "" if (city or "").endswith(OFFICE_SUFFIXES) else (city or "")
+    addr_line = f"地址：{zipc} {city_part}{dist or ''}{address}".strip()
     tel_line  = f"電話：{phone}" if phone else ""
     fax_line  = f"傳真：{fax}" if fax else ""
     hours_ln  = f"服務時間：{hours}" if hours else ""
@@ -118,6 +119,25 @@ def build_office_text(row):
         hours_ln,
         url_line
     ])
+
+OFFICE_SUFFIXES = ("辦事處", "分局", "服務據點")
+
+
+def office_title(row_city: str, name: str = "") -> str:
+    """Build the office title without doubling its suffix.
+
+    In offices.csv the 縣市別 ("city") column actually holds the office name,
+    e.g. 台北市辦事處. Appending 辦事處 to that produced 台北市辦事處辦事處.
+    """
+    if name:
+        return name
+    city = (row_city or "").strip()
+    if not city:
+        return "辦事處"
+    if city.endswith(OFFICE_SUFFIXES):
+        return city
+    return f"{city}辦事處"
+
 
 def main(in_path="data/offices.csv"):
     if not os.path.exists(in_path):
@@ -155,7 +175,7 @@ def main(in_path="data/offices.csv"):
         payload = {
             "dataset": os.path.basename(in_path),
             "type": "office",
-            "title": pick(rd, "name") or f"{rd.get('city','')}辦事處",
+            "title": office_title(pick(rd, "city"), pick(rd, "name")),
             "url": OFFICE_INDEX_URL,
             "city": pick(rd, "city"),
             "district": pick(rd, "district"),

@@ -1,14 +1,1 @@
-{
-  "title": "銀髮勞工小幫手",
-  "desc": "輸入問題或點選常見問題，系統會用大字與語音 回覆。",
-  "big": "大字模式",
-  "faq1": "勞保年金何時入帳？",
-  "faq2": "最近的勞保局辦事處在哪裡？",
-  "faq3": "失能等級第3級可以領多少？",
-  "yourQuestion": "請輸入您的問題",
-  "placeholder": "例如：我今年65歲，可以申請勞保老年年金嗎？",
-  "ask": "查詢",
-  "clear": "清除",
-  "answer": "系統回覆",
-  "disclaimer": "此為示範系統，實際資訊請以勞保局官方公告為準。"
-}
+{"title":"銀髮勞工小幫手","subtitle":"勞保、年金與就業服務諮詢","desc":"輸入問題或點選常見問題，系統會用大字與語音回覆。","official":"政府服務資訊助手","quickStart":"常見問題","quickStartHint":"點一下就可以開始查詢","big":"大字模式","contrast":"高對比","settings":"顯示設定","faq1":"我幾歲可以領勞保老年年金？","faq2":"勞工保險失能給付有哪些條件？","faq3":"如何申請遺屬年金？","faq4":"哪裡可以找到勞保局各地辦事處？","faq5":"失能給付可以領多少？","placeholder":"例如：我今年65歲，可以申請勞保老年年金嗎？","ask":"查詢","clear":"清除對話","print":"列印／儲存","speak":"語音輸入","stop":"停止","processing":"辨識中…","answer":"系統回覆","sources":"資料來源","thinking":"正在整理官方資料…","error":"系統連線失敗，請稍後再試。","rateLimited":"目前查詢人數較多，請稍後再試。","ttsError":"語音播放失敗，請稍後再試。","micError":"語音辨識失敗，請再試一次。","micPermission":"請允許麥克風權限後再試。","dismiss":"關閉訊息","emptyTitle":"今天想查詢什麼？","emptyText":"請點選上方常見問題，或在下方輸入您的問題。","you":"您的問題","enterHint":"按 Enter 查詢，Shift + Enter 換行","disclaimer":"此為示範系統，實際資訊請以勞保局官方公告為準。","play":"播放","pause":"暫停","resume":"繼續","generating":"生成中…","speechLabel":"朗讀回覆","office":"辦事處","address":"地址","hours":"服務時間","phone":"電話","map":"在地圖上查看"}

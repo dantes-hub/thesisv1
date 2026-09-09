@@ -592,14 +592,31 @@ app.post('/ask', askLimiter, async (req, res) => {
       const top = pickBestOffice(candidates, q);
 
       if (top) {
-        const addr = [top.zip, top.city, top.district, top.address].filter(Boolean).join(' ');
         const fallback = extractFromText(top.text || '');
+
+        // The source dataset puts the office name in its "city" column, so the
+        // payload's city is really a name like 台北市辦事處 and the title ends up
+        // doubled (台北市辦事處辦事處). Normalise both rather than concatenating
+        // the name back into the address.
+        const officeName = String(top.title || '')
+          .replace(/(辦事處|分局|服務據點)\1+$/, '$1')
+          .trim();
+        const looksLikeOfficeName = /(辦事處|分局|服務據點)$/.test(String(top.city || ''));
+        const addrParts = [
+          top.zip,
+          looksLikeOfficeName ? '' : top.city,
+          top.district,
+          top.address,
+        ].filter(Boolean);
+        const addr = addrParts.join(' ').trim();
+
         const finalAddr  = addr || fallback.address || '';
         const finalPhone = top.phone || fallback.phone || '';
         const finalHours = top.hours || fallback.hours || '';
+        const mapUrl = googleMapsUrl({ lat: top.lat, lng: top.lng, address: finalAddr });
     
         const answerZh = [
-          `**${top.title || '辦事處'}**`,
+          `**${officeName || '辦事處'}**`,
           finalAddr  ? `- 地址：${finalAddr}` : null,
           finalHours ? `- 服務時間：${finalHours}` : null,
           finalPhone ? `- 電話：${finalPhone}` : null,
@@ -610,7 +627,7 @@ app.post('/ask', askLimiter, async (req, res) => {
         ].filter(Boolean).join('\n');
     
         const answerEn = [
-          `**${top.title || 'Branch Office'}**`,
+          `**${officeName || 'Branch Office'}**`,
           finalAddr  ? `- Address: ${finalAddr}` : null,
           finalHours ? `- Hours: ${finalHours}` : null,
           finalPhone ? `- Phone: ${finalPhone}` : null,
@@ -625,8 +642,17 @@ app.post('/ask', askLimiter, async (req, res) => {
           mode,
           route: 'office_lookup',
           intent: 'office',
+          office: {
+            name: officeName || (lang === 'zh' ? '辦事處' : 'Branch Office'),
+            address: finalAddr,
+            phone: finalPhone,
+            hours: finalHours,
+            fax: top.fax || '',
+            url: top.url || '',
+            map_url: mapUrl,
+          },
           sources: [{
-            title: top.title || (lang === 'zh' ? '無標題' : 'Untitled'),
+            title: officeName || (lang === 'zh' ? '無標題' : 'Untitled'),
             url: top.url || '',
             snippet: (top.text || '').slice(0, 160)
           }]

@@ -1,14 +1,1 @@
-{
-  "title": "Elder Labor Assistant",
-  "desc": "Ask questions about labor insurance, pensions, and services. The assistant will reply in large text and with voice.",
-  "big": "Big text",
-  "faq1": "When will my pension be deposited?",
-  "faq2": "Where is the nearest labor insurance office?",
-  "faq3": "What benefits can I get for disability level 3?",
-  "yourQuestion": "Your question",
-  "placeholder": "e.g. I am 65 years old. Can I apply for labor insurance old-age pension?",
-  "ask": "Ask",
-  "clear": "Clear",
-  "answer": "Answer",
-  "disclaimer": "This is a demo assistant. Please verify information with official labor authorities."
-}
+{"title":"Elder Labor Assistant","subtitle":"Labor insurance, pensions, and services","desc":"Ask a question or choose a common question. Answers are shown in large text and can be read aloud.","official":"Government service information assistant","quickStart":"Common questions","quickStartHint":"Choose one to begin","big":"Big text","contrast":"High contrast","settings":"Display settings","faq1":"At what age can I claim labor insurance old-age pension?","faq2":"What are the conditions for disability benefits?","faq3":"How do I apply for survivors' benefits?","faq4":"Where can I find Labor Insurance Bureau branch offices?","faq5":"How much can I receive for disability benefits?","placeholder":"e.g. I am 65 years old. Can I apply for the old-age pension?","ask":"Ask","clear":"Clear conversation","print":"Print / Save","speak":"Speak","stop":"Stop","processing":"Processing…","answer":"Answer","sources":"Sources","thinking":"Checking official information…","error":"Connection failed, please try again later.","rateLimited":"There are many requests right now. Please try again shortly.","ttsError":"Audio could not be played. Please try again.","micError":"Speech recognition failed. Please try again.","micPermission":"Please allow microphone access and try again.","dismiss":"Dismiss message","emptyTitle":"What would you like to know?","emptyText":"Choose a common question above, or type your question below.","you":"Your question","enterHint":"Press Enter to ask, Shift + Enter for a new line","disclaimer":"This is a demo assistant. Please verify with official labor authorities.","play":"Play","pause":"Pause","resume":"Resume","generating":"Generating…","speechLabel":"Read answer aloud","office":"Office","address":"Address","hours":"Service hours","phone":"Phone","map":"View on map"}
