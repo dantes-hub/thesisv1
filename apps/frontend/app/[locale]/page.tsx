@@ -20,13 +20,13 @@ function t(locale: Locale, key: string) {
   return (copy[locale] as Record<string, string>)[key] ?? key
 }
 
-function AssistantMessage({ message, locale, speech, onSpeak }: { message: Message; locale: Locale; speech: SpeechState; onSpeak: () => void }) {
+function AssistantMessage({ message, locale, speech, onSpeak, canSpeak }: { message: Message; locale: Locale; speech: SpeechState; onSpeak: () => void; canSpeak: boolean }) {
   const isOffice = message.route === 'office_lookup' && message.office
   return <article className="assistant-message">
     <div className="message-kicker"><ShieldCheck size={18} aria-hidden="true" /> {t(locale, 'answer')}</div>
     <div className="answer-markdown"><ReactMarkdown>{message.content}</ReactMarkdown></div>
     {isOffice && <div className="info-card"><div><span>{t(locale, 'office')}</span><strong>{message.office?.name}</strong></div>{message.office?.address && <div><span>{t(locale, 'address')}</span><strong>{message.office.address}</strong></div>}{message.office?.hours && <div><span>{t(locale, 'hours')}</span><strong>{message.office.hours}</strong></div>}{message.office?.phone && <div><span>{t(locale, 'phone')}</span><a href={`tel:${message.office.phone}`}>{message.office.phone}</a></div>}{message.office?.map_url && <a className="map-link" href={message.office.map_url} target="_blank" rel="noopener noreferrer">{t(locale, 'map')} <ChevronRight size={18} /></a>}</div>}
-    <button className="speech-button" type="button" onClick={onSpeak} aria-label={`${t(locale, 'speechLabel')}: ${speech === 'playing' ? t(locale, 'pause') : t(locale, 'play')}`} disabled={speech === 'loading'}>{speech === 'loading' ? <Volume2 className="spin" size={20} /> : speech === 'playing' ? <Pause size={20} /> : <Play size={20} />}<span>{speech === 'loading' ? t(locale, 'generating') : speech === 'playing' ? t(locale, 'pause') : speech === 'paused' ? t(locale, 'resume') : t(locale, 'play')}</span></button>
+    {canSpeak && <button className="speech-button" type="button" onClick={onSpeak} aria-label={`${t(locale, 'speechLabel')}: ${speech === 'playing' ? t(locale, 'pause') : t(locale, 'play')}`} disabled={speech === 'loading'}>{speech === 'loading' ? <Volume2 className="spin" size={20} /> : speech === 'playing' ? <Pause size={20} /> : <Play size={20} />}<span>{speech === 'loading' ? t(locale, 'generating') : speech === 'playing' ? t(locale, 'pause') : speech === 'paused' ? t(locale, 'resume') : t(locale, 'play')}</span></button>}
     {message.sources && message.sources.length > 0 && <section className="sources" aria-label={t(locale, 'sources')}><h3><BookOpen size={18} /> {t(locale, 'sources')}</h3>{message.sources.slice(0, 5).map((source, index) => <div className="source-item" key={`${source.url}-${index}`}><span className="source-number">{index + 1}</span><div><a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a>{source.snippet && <p>{source.snippet}</p>}</div></div>)}</section>}
   </article>
 }
@@ -39,6 +39,7 @@ export default function LocalePage({ params }: { params: Promise<{ locale: strin
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [faqOpen, setFaqOpen] = useState(false)
+  const [canSpeak, setCanSpeak] = useState(true)
   const [bigText, setBigText] = useState(true)
   const [contrast, setContrast] = useState(false)
   const [mic, setMic] = useState<MicState>('idle')
@@ -53,6 +54,17 @@ export default function LocalePage({ params }: { params: Promise<{ locale: strin
   const chunksRef = useRef<Blob[]>([])
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
   const text = useMemo(() => copy[locale], [locale])
+
+  // Ask the API whether speech is configured. Offering a Play button that is
+  // certain to fail is worse for this audience than not offering one.
+  useEffect(() => {
+    let cancelled = false
+    fetch(`${apiUrl}/health`)
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled && d && d.tts === false) setCanSpeak(false) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [apiUrl])
 
   // Restore saved preferences before anything persists, so the mount pass of the
   // effects below cannot overwrite them with the defaults.
@@ -159,6 +171,9 @@ export default function LocalePage({ params }: { params: Promise<{ locale: strin
       setSpeechStates((s) => ({ ...s, [message.id]: 'playing' }))
     } catch (err) {
       setSpeechStates((s) => ({ ...s, [message.id]: 'idle' }))
+      // A key that is missing, invalid or out of quota fails for every message,
+      // so stop offering it rather than letting the user hit the same error.
+      setCanSpeak(false)
       setError(err instanceof Error ? err.message : t(locale, 'ttsError'))
     }
   }
@@ -185,7 +200,7 @@ export default function LocalePage({ params }: { params: Promise<{ locale: strin
     <section className="hero"><div className="eyebrow"><span className="status-dot" /> {text.official}</div><h1>{text.title}</h1><p>{text.desc}</p></section>
     <section className="faq-section"><div className="section-heading"><span>{text.quickStart}</span><small>{text.quickStartHint}</small></div><div className="faq-grid">{faqs.map((key) => <button className="faq-chip" type="button" key={key} onClick={() => ask(t(locale, key))}>{t(locale, key)}<ChevronRight size={19} /></button>)}</div></section>
     {error && <div className="inline-alert" role="alert"><CircleAlert size={20} /><span>{error}</span><button type="button" onClick={() => setError('')} aria-label={t(locale, 'dismiss')}><X size={20} /></button></div>}
-    {messages.length > 0 && !faqOpen && <button className="faq-reopen" type="button" onClick={() => setFaqOpen(true)}>{t(locale, 'quickStart')} <ChevronRight size={18} /></button>}<section className="conversation" ref={conversationRef} aria-live="polite">{messages.length === 0 && !loading && <div className="empty-state"><div className="empty-icon"><BookOpen size={30} /></div><h2>{text.emptyTitle}</h2><p>{text.emptyText}</p></div>}{messages.map((message) => message.role === 'user' ? <div className="user-message" key={message.id}><span>{text.you}</span><p>{message.content}</p></div> : <AssistantMessage key={message.id} message={message} locale={locale} speech={speechStates[message.id] || 'idle'} onSpeak={() => speak(message)} />)}{loading && <div className="assistant-message loading-card"><div className="message-kicker"><ShieldCheck size={18} /> {text.answer}</div><div className="loading-lines"><span /><span /><span /></div><p>{text.thinking}</p></div>}</section>
+    {messages.length > 0 && !faqOpen && <button className="faq-reopen" type="button" onClick={() => setFaqOpen(true)}>{t(locale, 'quickStart')} <ChevronRight size={18} /></button>}<section className="conversation" ref={conversationRef} aria-live="polite">{messages.length === 0 && !loading && <div className="empty-state"><div className="empty-icon"><BookOpen size={30} /></div><h2>{text.emptyTitle}</h2><p>{text.emptyText}</p></div>}{messages.map((message) => message.role === 'user' ? <div className="user-message" key={message.id}><span>{text.you}</span><p>{message.content}</p></div> : <AssistantMessage key={message.id} message={message} locale={locale} speech={speechStates[message.id] || 'idle'} onSpeak={() => speak(message)} canSpeak={canSpeak} />)}{loading && <div className="assistant-message loading-card"><div className="message-kicker"><ShieldCheck size={18} /> {text.answer}</div><div className="loading-lines"><span /><span /><span /></div><p>{text.thinking}</p></div>}</section>
     <section className="composer-wrap"><div className="composer"><textarea ref={textareaRef} value={question} onChange={(e) => { setQuestion(e.target.value); resize() }} onKeyDown={onKeyDown} placeholder={text.placeholder} rows={1} aria-label={text.placeholder} /><div className="composer-actions"><div className="left-actions">{locale === 'zh' && <button className={`icon-button mic-button ${mic === 'recording' ? 'recording' : ''}`} type="button" onClick={startRecording} disabled={mic === 'processing'} aria-label={mic === 'recording' ? text.stop : mic === 'processing' ? text.processing : text.speak}>{mic === 'recording' ? <Square size={21} /> : mic === 'processing' ? <RotateCcw className="spin" size={21} /> : <Mic size={21} />}<span>{mic === 'recording' ? `${text.stop} ${recordingSeconds}s` : mic === 'processing' ? text.processing : text.speak}</span>{mic === 'recording' && <i className="meter" aria-hidden="true" />}</button>}<button className="secondary-button" type="button" onClick={() => window.print()}><Printer size={19} /> {text.print}</button><button className="secondary-button clear-button" type="button" onClick={clear} disabled={messages.length === 0}><RotateCcw size={19} /> {text.clear}</button></div><button className="send-button" type="button" onClick={() => ask()} disabled={loading || !question.trim()}>{text.ask}<Send size={19} /></button></div></div><p className="composer-hint">{text.enterHint}</p></section>
     <footer>{text.disclaimer}</footer>
   </main>

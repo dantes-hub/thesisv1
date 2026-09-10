@@ -235,13 +235,20 @@ function safeDetail(e) {
 }
 
 //  endpoints 
+// Whether spoken answers can be produced at all. Clients use this to avoid
+// offering a Play button that is certain to fail.
+const TTS_CONFIGURED = Boolean(
+  process.env.ELEVENLABS_API_KEY &&
+  (process.env.TTS_VOICE_ZH || process.env.TTS_VOICE_EN)
+);
+
 app.get('/health', async (_req, res) => {
   try {
     const info = await qdrant.getCollections();
-    res.json({ ok: true, collections: info.collections?.map(c => c.name) || [] });
+    res.json({ ok: true, collections: info.collections?.map(c => c.name) || [], tts: TTS_CONFIGURED });
   } catch (e) {
     console.error('health check failed:', e);
-    res.status(500).json({ ok: false, error: 'qdrant_unreachable', detail: safeDetail(e) });
+    res.status(500).json({ ok: false, error: 'qdrant_unreachable', detail: safeDetail(e), tts: TTS_CONFIGURED });
   }
 });
 
